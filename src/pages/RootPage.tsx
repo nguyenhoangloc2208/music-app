@@ -1,38 +1,11 @@
-// App.tsx
-import React, { useState } from 'react';
-import { getData } from '../services/fetcher';
+import NavBar from "../components/NavBar/NavBar";
+import PlaySong from "../components/PlaySong/PlaySong";
 
 export default function RootPage(){
-  const [videoID, setVideoID] = useState<string>('');
-  const [audioUrl, setAudioUrl] = useState<string>('');
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-        const response: string = await getData(videoID);
-        setAudioUrl(response);
-    } catch (error) {
-      console.error('Error fetching audio URL:', error);
-    }
-  };
-
-  return (
-    <div>
-      <h1>YouTube Audio Player</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Nhập ID YouTube"
-          value={videoID}
-          onChange={(e) => setVideoID(e.target.value)}
-        />
-        <button type="submit">Phát</button>
-      </form>
-      {audioUrl && (
-        <audio controls>
-          <source src={audioUrl} type="audio/mpeg" />
-        </audio>
-      )}
+  return(
+    <div className="mx-auto flex h-full w-11/12 md:w-2/3 lg:w-2/3 xl:w-2/3 min-w-[300px] flex-col items-center">
+        <NavBar/>
+        <PlaySong/>
     </div>
   );
 };
