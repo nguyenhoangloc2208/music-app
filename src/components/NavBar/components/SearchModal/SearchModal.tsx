@@ -2,17 +2,20 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { debounce } from "lodash";
 import useSearch, {YoutubeSong } from "../../../../hooks/useSearch";
 import { IconPlay } from "../../../icons/IconPlay";
+import { useAtom } from "jotai";
+import { playListAtom } from "../../../../atoms/playListAtom";
+import { selectedSongAtom } from "../../../../atoms/selectedSongAtom";
 
 export default function SearchModal() {
     const [error, setError] = useState<string | null>(null);
-    const [inputValue, setInputValue] = useState('');
     const [songs, setSongs] = useState<YoutubeSong[]>([]);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [pickedId, setPickedId] = useState<string>("");
-
+    const [playList, setPlayList] = useAtom(playListAtom);
+    const [selectedSong, setSelectedSong] = useAtom(selectedSongAtom);
     const { isMutating, trigger } = useSearch();
-
+    
     useEffect(() => {
         inputRef.current?.focus();
     }, []);
@@ -42,11 +45,41 @@ export default function SearchModal() {
     const onInputChange = useCallback(
         debounce(async (event: React.ChangeEvent<HTMLInputElement>) => {
             const value = event.target.value;
-            setInputValue(value);
             setError(null);
             await search(value);
         }, 500),
         [search]
+    );
+
+    const onSelectSong = useCallback(
+        (song: YoutubeSong) => {
+            setPlayList((prev) => {
+                const isDuplicate = prev.some((item) => item.id.videoId === song.id.videoId);
+                if (isDuplicate) {
+                    console.log('This song is already in the playlist!');
+                    return prev;
+                } else {
+                    const newSong = {
+                        id: {
+                            videoId: song.id.videoId
+                        },
+                        snippet: {
+                            channelTitle: song.snippet.channelTitle,
+                            thumbnails: {
+                                medium: {
+                                    url: song.snippet.thumbnails.medium.url
+                                }
+                            },
+                            title: song.snippet.title
+                        }
+                    };
+    
+                    const newPlayList = [newSong, ...prev];
+                    return newPlayList;
+                }
+            });
+        },
+        [playList, setPlayList]
     );
 
     return (
@@ -90,6 +123,7 @@ export default function SearchModal() {
                         <div
                             key={videoId}
                             className="my-3 py-[10px] px-[15px] hover:scale-105 bg-white rounded-lg cursor-pointer transition-transform flex justify-between items-center"
+                            onClick={() =>  onSelectSong(song)}
                         >
                             <div className="flex items-center h-full pr-3">
                                 <img
@@ -110,10 +144,13 @@ export default function SearchModal() {
                                 loading ? (
                                     <span className="loading loading-spinner loading-lg mx-auto block"></span>
                                 ) : (
-                                    <IconPlay />
+                                    <IconPlay 
+                                    />
                                 )
                             ) : (
-                                <IconPlay />
+                                <IconPlay 
+                                className="hover:scale-125 transition-transform"
+                                />
                             )}
                         </div>
                     );
