@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { getData } from "../../services/fetcher";
+import { getAudio } from "../../services/fetcher";
 import { IconPlay } from "../icons/IconPlay";
 
 export default function PlaySong() {
@@ -11,7 +11,7 @@ export default function PlaySong() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response: string = await getData(videoID);
+            const response: string = await getAudio(`https://www.youtube.com/watch?v=${videoID}`);
             setAudioUrl(response);
         } catch (error) {
         console.error('Error fetching audio URL:', error);

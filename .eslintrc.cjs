@@ -12,12 +12,12 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   plugins: ['react-refresh'],
   rules: {
-    'max-lines-per-function': [
-      'warning',
+    "@typescript-eslint/no-explicit-any": "off",
+    'react/destructuring-assignment': [
+      'error',
+      'always',
       {
-        max: 100,
-        skipBlankLines: true,
-        skipComments: true,
+        destructureInSignature: 'always',
       },
     ],
     'react-refresh/only-export-components': [

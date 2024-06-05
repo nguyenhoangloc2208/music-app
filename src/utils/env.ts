@@ -9,3 +9,5 @@ export function getEnv(key: string): string {
 export const serverUrl = getEnv('VITE_SERVER_URL');
 
 export const youtubeApiKey = getEnv('VITE_YOUTUBE_API_KEY');
+
+export const storageKey = getEnv('VITE_STORAGE_KEY');

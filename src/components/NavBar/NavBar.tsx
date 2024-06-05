@@ -1,6 +1,7 @@
 import { useState } from "react";
 import IconSearch from "../icons/IconSearch";
 import { Modal, Button } from "@mui/material";
+import SearchModal from "./components/SearchModal/SearchModal";
 
 export default function NavBar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -30,11 +31,7 @@ export default function NavBar() {
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description"
                     >
-                        <div className="bg-white p-4 rounded-md max-w-[600px] mx-auto mt-10">
-                            <h2 id="modal-modal-title">Modal</h2>
-                            <p id="modal-modal-description">Đây là nội dung modal</p>
-                            <Button onClick={handleClose} variant="contained">Đóng</Button>
-                        </div>
+                        <SearchModal/>
                     </Modal>
                 </div>
             </div>
