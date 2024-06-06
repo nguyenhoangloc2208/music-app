@@ -4,6 +4,13 @@ import { IconPlay } from "../icons/IconPlay";
 import { useAtom } from "jotai";
 import { selectedSongAtom } from "../../atoms/selectedSongAtom";
 import { playListAtom } from "../../atoms/playListAtom";
+import { IconPause } from "../icons/IconPause";
+import { IconSpeakerWave } from "../icons/IconSpeakerWave";
+import { IconPrevious } from "../icons/IconPrevious";
+import { IconNext } from "../icons/IconNext";
+import { IconLoop } from "../icons/IconLoop";
+import { IconRandom } from "../icons/IconRandom";
+import { IconYoutube } from "../icons/IconYoutube";
 
 export default function PlaySong() {
     const [audioUrl, setAudioUrl] = useState<string>('');
@@ -117,9 +124,9 @@ export default function PlaySong() {
                     className="w-[250px] h-[250px] mr-5 relative rounded-full cursor-pointer mb-3 md:mb-0 bg-black dark:bg-white "
                     onClick={togglePlay}
                 >
-                {selectedSong.snippet.thumbnails.medium.url ? (
+                {selectedSong.snippet.thumbnails.high.url ? (
                     <img
-                        src={selectedSong.snippet.thumbnails.medium.url}
+                        src={selectedSong.snippet.thumbnails.high.url}
                         alt="song"
                         width={250}
                         height={250}
@@ -135,49 +142,81 @@ export default function PlaySong() {
                     </div>
                 )}
                 {isPlaying ? (
-                    <IconPlay className="cursor-pointer fill-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-
+                    <IconPause className="cursor-pointer fill-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
                 ) : (
                     <IconPlay className="cursor-pointer fill-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
                 )}
             </div>
             <div className="md:max-w-[500px] w-full">
-                {selectedSong.snippet.title ? (
-                    <h2 className="font-bold text-4xl mb-2 h-20 overflow-hidden">
-                        {selectedSong.snippet.title?.length >= 45 ? (
-                            <>{selectedSong.snippet.title}</>
-                        ) : (
-                            selectedSong.snippet.title
-                        )}
-                    </h2>
-                ) : (
-                    <h2 className="font-bold text-4xl mb-2">
-                        Waiting...
-                    </h2>
-                )}
-                {selectedSong.snippet.channelTitle ? (
-                    <p className="text-sm text-gray-500 font-mono mb-8 dark:text-white">
-                        {selectedSong.snippet.channelTitle}
-                    </p>
-                ) : (
-                    <p className="text-sm text-gray-500 font-mono mb-8 dark:text-white">
-                        Please select your song
-                    </p>
-                )}
-                {audioUrl && <audio ref={audioRef} hidden />}
-                <div className="flex justify-between mb-0">
-                    <p className="text-gray-500 font-mono dark:text-white">{minTime}</p>
-                    <p className="text-gray-500 font-mono dark:text-white">{maxTime}</p>
+                <div>
+                    {selectedSong.snippet.title ? (
+                        <h2 className="font-bold text-4xl mb-2 h-20 overflow-hidden">
+                            {selectedSong.snippet.title?.length >= 45 ? (
+                                <>{selectedSong.snippet.title}</>
+                            ) : (
+                                selectedSong.snippet.title
+                            )}
+                        </h2>
+                    ) : (
+                        <h2 className="font-bold text-4xl mb-2">
+                            Waiting...
+                        </h2>
+                    )}
+                    {selectedSong.snippet.channelTitle ? (
+                        <p className="text-sm text-gray-500 font-mono mb-8 dark:text-white">
+                            {selectedSong.snippet.channelTitle}
+                        </p>
+                    ) : (
+                        <p className="text-sm text-gray-500 font-mono mb-8 dark:text-white">
+                            Please select your song
+                        </p>
+                    )}
+                    {audioUrl && <audio ref={audioRef} hidden />}
+                    <div className="flex justify-between mb-0">
+                        <p className="text-gray-500 font-mono dark:text-white">{minTime}</p>
+                        <p className="text-gray-500 font-mono dark:text-white">{maxTime}</p>
+                    </div>
+                    <input
+                        type="range"
+                        value={currentTime}
+                        min={0}
+                        step={1}
+                        max={duration}
+                        className="w-full mb-5 h-1 bg-gray-400 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:h-[15px] [&::-webkit-slider-thumb]:w-[15px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:bg-black"
+                        onChange={handleProgressChange}
+                    />
                 </div>
-                <input
-                    type="range"
-                    value={currentTime}
-                    min={0}
-                    step={1}
-                    max={duration}
-                    className="w-full mb-5 h-1 bg-gray-400 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:h-[15px] [&::-webkit-slider-thumb]:w-[15px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:bg-black"
-                    onChange={handleProgressChange}
-                />
+                <div className="w-full flex items-center justify-between">
+                    <IconSpeakerWave
+                        className="cursor-pointer transition-transform transform hover:scale-110"
+                    />
+                    <IconRandom
+                        className="cursor-pointer transition-transform transform hover:scale-110 fill-gray-500"
+                    />
+                    <IconPrevious
+                        className="cursor-pointer transition-transform transform hover:scale-110"
+                    />
+                    {isPlaying ? 
+                        <IconPause
+                            className="cursor-pointer transition-transform transform hover:scale-110"
+                            onClick={togglePlay}
+                        />
+                    :
+                        <IconPlay
+                            className="cursor-pointer transition-transform transform hover:scale-110"
+                            onClick={togglePlay}
+                        />
+                    }
+                    <IconNext
+                        className="cursor-pointer transition-transform transform hover:scale-110"
+                    />
+                    <IconLoop
+                        className="cursor-pointer transition-transform transform hover:scale-110 fill-gray-500"
+                    />
+                    <IconYoutube
+                        className="cursor-pointer transition-transform transform hover:scale-110 fill-gray-800"
+                    />
+                </div>
             </div>
         </div>
     );

@@ -9,7 +9,7 @@ const emptyYoutubeSong: YoutubeSong = {
     snippet: {
         channelTitle: "",
         thumbnails: {
-            medium: {
+            high: {
                 url: ""
             }
         },

@@ -14,7 +14,7 @@ export default function NavBar() {
     };
 
     return(
-        <div className="fixed w-full z-10 top-0 left-0 bg-white">
+        <div className="fixed w-full z-40 top-0 left-0 bg-white">
             <div className="max-w-[900px] px-4 md:px-0 mx-auto flex justify-between items-center py-3">
                 <a href="/" className="flex items-center cursor-pointer">
                     <p className="font-black italic">
@@ -22,8 +22,13 @@ export default function NavBar() {
                     </p>
                 </a>
                 <div className="flex items-center">
+                    <a
+                        className="text-sm md:block text-gray-500"
+                    >
+                        Beru playlists
+                    </a>
                     <IconSearch
-                        className="cursor-pointer fill-black text-xl"
+                        className="ml-7 cursor-pointer fill-black text-xl"
                         onClick={handleOpen}
                     />
                     <Modal

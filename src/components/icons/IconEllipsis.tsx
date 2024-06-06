@@ -1,3 +1,5 @@
+// icon:ellipsis-vertical | Heroicons UI https://heroicons.com/solid
+
 export function IconEllipsis(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg 

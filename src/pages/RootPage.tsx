@@ -4,7 +4,7 @@ import PlaySong from "../components/PlaySong/PlaySong";
 
 export default function RootPage(){
   return(
-    <div className="mx-auto flex h-full max-w-[900px] min-w-[300px] flex-col items-center">
+    <div className="mx-auto p-5 flex h-full max-w-[900px] min-w-[300px] flex-col items-center">
         <NavBar/>
         <PlaySong/>
         <PlayList/>

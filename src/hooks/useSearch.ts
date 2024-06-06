@@ -13,7 +13,7 @@ export interface YoutubeSong {
     snippet: {
         channelTitle: string;
         thumbnails: {
-            medium: {
+            high: {
                 url: string;
             };
         };
@@ -34,8 +34,8 @@ export default function useSearch() {
         snippet: {
             channelTitle: item.snippet.channelTitle,
             thumbnails: {
-                medium: {
-                    url: item.snippet.thumbnails.medium.url
+                high: {
+                    url: item.snippet.thumbnails.high.url
                 }
             },
             title: item.snippet.title

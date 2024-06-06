@@ -1,4 +1,4 @@
-// icon:icon-location | Heroicons UI https://github.com/sschoger/heroicons-ui | Steve Schoger
+// icon:icon-search | Heroicons UI https://github.com/sschoger/heroicons-ui | Steve Schoger
 
 export default function IconSearch(props: React.SVGProps<SVGSVGElement>) {
     return(

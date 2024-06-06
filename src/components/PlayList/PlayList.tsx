@@ -45,7 +45,7 @@ export default function PlayList(){
                                     >
                                         <div className="relative w-[50px] h-[50px] mr-3">
                                             <img    
-                                                src={play.snippet.thumbnails.medium.url}
+                                                src={play.snippet.thumbnails.high.url}
                                                 alt="image"
                                                 width={40}
                                                 height={40}
@@ -53,17 +53,19 @@ export default function PlayList(){
                                                 />
                                         </div>
                                         <div>
-                                            <h4 className="text-base font-semibold h-12 overflow-hidden">
+                                            <h4 className="text-base font-semibold h-6 overflow-hidden">
                                                 {play.snippet.title}
                                             </h4>
                                             <p className="font-mono text-sm text-gray-500">
                                                 {play.snippet.channelTitle}
                                             </p>
                                         </div>
+                                        <div className="absolute right-10">
+                                            <IconEllipsis
+                                                className="cursor-pointer"
+                                            />
+                                        </div>
                                     </div>
-                                    <IconEllipsis
-                                        className="cursor-pointer"
-                                    />
                                 </div>
                             );
                         })}

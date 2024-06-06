@@ -69,8 +69,8 @@ export default function SearchModal() {
                         snippet: {
                             channelTitle: song.snippet.channelTitle,
                             thumbnails: {
-                                medium: {
-                                    url: song.snippet.thumbnails.medium.url
+                                high: {
+                                    url: song.snippet.thumbnails.high.url
                                 }
                             },
                             title: song.snippet.title
@@ -121,7 +121,7 @@ export default function SearchModal() {
                         snippet: {
                             channelTitle,
                             thumbnails: {
-                                medium: { url },
+                                high: { url },
                             },
                             title,
                         },
