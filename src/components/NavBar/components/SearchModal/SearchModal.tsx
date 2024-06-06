@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { debounce } from "lodash";
 import useSearch, {YoutubeSong } from "../../../../hooks/useSearch";
 import { IconPlay } from "../../../icons/IconPlay";
-import { useAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { playListAtom } from "../../../../atoms/playListAtom";
-import { selectedSongAtom } from "../../../../atoms/selectedSongAtom";
+import { debounce } from "@mui/material";
 
 export default function SearchModal() {
     const [error, setError] = useState<string | null>(null);
@@ -12,14 +11,12 @@ export default function SearchModal() {
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [pickedId, setPickedId] = useState<string>("");
-    const [playList, setPlayList] = useAtom(playListAtom);
-    const [selectedSong, setSelectedSong] = useAtom(selectedSongAtom);
+    const setPlayList = useSetAtom(playListAtom);
     const { isMutating, trigger } = useSearch();
     
     useEffect(() => {
         inputRef.current?.focus();
     }, []);
-
 
     const search = useCallback(
         async (value: string) => {
@@ -42,21 +39,27 @@ export default function SearchModal() {
         [trigger]
     );
 
-    const onInputChange = useCallback(
-        debounce(async (event: React.ChangeEvent<HTMLInputElement>) => {
-            const value = event.target.value;
-            setError(null);
-            await search(value);
-        }, 500),
-        [search]
-    );
 
+    const debouncedSearch = debounce(async (value, setError, search) => {
+        setError(null);
+        await search(value);
+    }, 500);
+    
+    const onInputChange = useCallback(
+        (event: React.ChangeEvent<HTMLInputElement>) => {
+            const value = event.target.value;
+            debouncedSearch(value, setError, search);
+        },
+        [debouncedSearch, setError, search]
+    );
     const onSelectSong = useCallback(
         (song: YoutubeSong) => {
+            setPickedId(song.id.videoId);
             setPlayList((prev) => {
                 const isDuplicate = prev.some((item) => item.id.videoId === song.id.videoId);
                 if (isDuplicate) {
                     console.log('This song is already in the playlist!');
+                    alert('This song is already in the playlist!');
                     return prev;
                 } else {
                     const newSong = {
@@ -72,14 +75,18 @@ export default function SearchModal() {
                             },
                             title: song.snippet.title
                         }
+                        
                     };
+                    console.log(newSong);
+                    console.log(prev);
+                    
     
-                    const newPlayList = [newSong, ...prev];
+                    const newPlayList = [...prev, newSong];
                     return newPlayList;
                 }
             });
         },
-        [playList, setPlayList]
+        [setPlayList]
     );
 
     return (
@@ -94,12 +101,12 @@ export default function SearchModal() {
                         className="absolute top-1/2 -translate-y-1/2 ml-4"
                     />
                     <input
+                        ref={inputRef}
                         type="text"
-                        onChange={onInputChange}
                         placeholder="Search your song"
                         className="py-[15px] pl-[55px] pr-[15px] w-full rounded-lg text-black outline-none"
-                        ref={inputRef}
                         aria-label="Search input"
+                        onChange={onInputChange}
                     />
                 </div>
                 {isMutating && !error && (
