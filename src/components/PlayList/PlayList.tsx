@@ -15,7 +15,7 @@ export default function PlayList(){
     }, [setSelectedSong]);
 
     return(
-        <div className="w-full mx-4 md:mx-auto mt-20 mb-10">
+        <div className="w-full mt-20 mx-4 md:mx-auto mb-10">
             <h2 className="mb-5 font-bold text-2xl">
                 PlayList
             </h2>
