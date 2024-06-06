@@ -11,6 +11,7 @@ import { IconNext } from "../icons/IconNext";
 import { IconLoop } from "../icons/IconLoop";
 import { IconRandom } from "../icons/IconRandom";
 import { IconYoutube } from "../icons/IconYoutube";
+import { IconSpeakerX } from "../icons/IconSpeakerX";
 
 export default function PlaySong() {
     const [audioUrl, setAudioUrl] = useState<string>('');
@@ -23,6 +24,10 @@ export default function PlaySong() {
     const [maxTime, setMaxTime] = useState<string>("0:00");
     const [minTime, setMinTime] = useState<string>("0:00");
     const [audioChangeCounter, setAudioChangeCounter] = useState(0);
+    const [isVolumeAppear, setIsVolumneAppear] = useState<boolean>(false);
+    const [volume, setVolume] = useState<number>(1);
+    const [isLoop, setIsLoop] = useState<boolean>(false);
+    const [isRandom, setIsRandom] = useState<boolean>(false);
 
     useEffect(() => {
         setAudioChangeCounter(prevCounter => prevCounter + 1);
@@ -69,8 +74,14 @@ export default function PlaySong() {
                 ];
                 setMinTime(`${h > 0 ? `${h}:` : ""}${m}:${s < 10 ? `0${s}` : s}`);
                 setCurrentTime(current);
-                if (current === duration) nextSong();
-            }
+                if (current === duration && !isLoop) {
+                    if(!isRandom){
+                        nextSong();
+                    }else{
+                        randomSong();
+                    }
+                }
+                }
         };
 
         const audio = audioRef.current;
@@ -81,9 +92,29 @@ export default function PlaySong() {
             });
             audio.onloadedmetadata = updateMetadata;
             audio.ontimeupdate = updateTime;
-            audio.onended = nextSong;
+            if(isLoop){
+                audio.loop = isLoop;
+            }else{
+                if(isRandom){
+                    audio.onended = randomSong;
+                }else{
+                    audio.onended = nextSong;
+                }
+            }
         }
     }, [audioChangeCounter]);
+
+    useEffect(() => {
+        if (audioRef.current) {
+            audioRef.current.loop = isLoop;
+        }
+    }, [isLoop]);
+
+    useEffect(() => {
+        if (audioRef.current) {
+            audioRef.current.volume = volume;
+        }
+    }, [volume]);
 
     const togglePlay = () => {
         const audio = audioRef.current;
@@ -99,10 +130,29 @@ export default function PlaySong() {
         if (currentIndex + 1 < playList.length) {
             setSelectedSong(playList[currentIndex + 1]);
         } else {
-            setIsPlaying(false);
+            const audio = audioRef.current
+            if(audio){
+                audio.pause()
+                setIsPlaying(false);
+            }
             alert("Running out of songs in the playlist");
         }
     };
+
+    const prevSong = () => {
+        const currentIndex = playList.findIndex(song => song.id.videoId === selectedSong.id.videoId);
+        if (currentIndex !== 0) {
+            setSelectedSong(playList[currentIndex -1]);
+        } else {
+            alert("No more previous song");
+        }
+    };
+
+    const randomSong = () => {
+        const totalSong = playList.length;
+        const randomSongIndex = Math.ceil(Math.random() * totalSong) - 1;
+        setSelectedSong(playList[randomSongIndex])
+    }
 
     const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newTime = Math.floor(Number(e.target.value));
@@ -121,7 +171,7 @@ export default function PlaySong() {
     return (
         <div className="mt-36 w-full max-w-[900px] flex flex-col mx-4 md:mx-auto items-center md:items-start md:flex-row z-20">
             <div
-                    className="w-[250px] h-[250px] mr-5 relative rounded-full cursor-pointer mb-3 md:mb-0 bg-black dark:bg-white "
+                    className="w-[250px] h-[250px] mr-5 relative rounded-full cursor-pointer mb-3 md:mb-0 bg-black"
                     onClick={togglePlay}
                 >
                 {selectedSong.snippet.thumbnails.high.url ? (
@@ -163,18 +213,18 @@ export default function PlaySong() {
                         </h2>
                     )}
                     {selectedSong.snippet.channelTitle ? (
-                        <p className="text-sm text-gray-500 font-mono mb-8 dark:text-white">
+                        <p className="text-sm text-gray-500 font-mono mb-8">
                             {selectedSong.snippet.channelTitle}
                         </p>
                     ) : (
-                        <p className="text-sm text-gray-500 font-mono mb-8 dark:text-white">
+                        <p className="text-sm text-gray-500 font-mono mb-8">
                             Please select your song
                         </p>
                     )}
                     {audioUrl && <audio ref={audioRef} hidden />}
                     <div className="flex justify-between mb-0">
-                        <p className="text-gray-500 font-mono dark:text-white">{minTime}</p>
-                        <p className="text-gray-500 font-mono dark:text-white">{maxTime}</p>
+                        <p className="text-gray-500 font-mono">{minTime}</p>
+                        <p className="text-gray-500 font-mono">{maxTime}</p>
                     </div>
                     <input
                         type="range"
@@ -187,14 +237,48 @@ export default function PlaySong() {
                     />
                 </div>
                 <div className="w-full flex items-center justify-between">
-                    <IconSpeakerWave
-                        className="cursor-pointer transition-transform transform hover:scale-110"
-                    />
+                    <div
+                        className="relative"
+                        onMouseEnter={() => {
+                            setIsVolumneAppear(true);
+                        }}
+                        onMouseLeave={() => {
+                            setIsVolumneAppear(false);
+                        }}
+                    >
+                        {volume !== 0 ? (
+                            <IconSpeakerWave
+                            className="cursor-pointer transition-transform transform hover:scale-110"
+                            />
+                        ):(
+                            <IconSpeakerX
+                            className="cursor-pointer transition-transform transform hover:scale-110"
+                            />
+                        )}
+                        <input
+                                type="range"
+                                min={0}
+                                max={1}
+                                step={0.1}
+                                value={volume}
+                                className={`${
+                                    isVolumeAppear ? "block" : "hidden"
+                                } absolute left-1/2 -translate-x-1/2 h-1 bg-white dark:bg-black rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:h-[10px] [&::-webkit-slider-thumb]:w-[10px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black dark:[&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-runnable-track]:rounded-lg [&::-webkit-slider-runnable-track]:bg-black/25 dark:[&::-webkit-slider-runnable-track]:bg-white/25 p-3 shadow-md`}
+                                onChange={(event) => {
+                                    setVolume(event.target.valueAsNumber);
+                                }}
+                            />
+                    </div>
                     <IconRandom
-                        className="cursor-pointer transition-transform transform hover:scale-110 fill-gray-500"
+                        className={`${isRandom ? "fill-black hover:scale-110" : "fill-gray-500 hover:scale-110"} cursor-pointer transition-transform transform hover:scale-110 `}
+                        onClick={() => 
+                            {setIsRandom(!isRandom)
+                            setIsLoop(false)}
+                        }
                     />
                     <IconPrevious
                         className="cursor-pointer transition-transform transform hover:scale-110"
+                        onClick={prevSong}
                     />
                     {isPlaying ? 
                         <IconPause
@@ -209,13 +293,25 @@ export default function PlaySong() {
                     }
                     <IconNext
                         className="cursor-pointer transition-transform transform hover:scale-110"
+                        onClick={nextSong}
                     />
                     <IconLoop
-                        className="cursor-pointer transition-transform transform hover:scale-110 fill-gray-500"
+                        className={`${isLoop ? "fill-black scale-110 hover:scale-110" : "fill-gray-500 hover:scale-110"} cursor-pointer transition-transform transform hover:scale-110 `}
+                        onClick={() => 
+                            {setIsLoop(!isLoop)
+                            setIsRandom(false)}
+                        }
                     />
-                    <IconYoutube
-                        className="cursor-pointer transition-transform transform hover:scale-110 fill-gray-800"
-                    />
+                    <a
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href={`https://www.youtube.com/watch?v=${selectedSong.id.videoId}`}
+                        onClick={togglePlay}
+                    >
+                        <IconYoutube
+                            className="cursor-pointer transition-transform transform hover:scale-110 fill-gray-800"
+                        />
+                    </a>
                 </div>
             </div>
         </div>
