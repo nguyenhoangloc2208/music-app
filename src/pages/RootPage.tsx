@@ -1,13 +1,15 @@
+import { Outlet } from "react-router-dom";
 import NavBar from "../components/NavBar/NavBar";
-import PlayList from "../components/PlayList/PlayList";
-import PlaySong from "../components/PlaySong/PlaySong";
 
 export default function RootPage(){
   return(
     <div className="mx-auto p-5 flex h-full max-w-[900px] min-w-[300px] flex-col items-center">
+      <nav>
         <NavBar/>
-        <PlaySong/>
-        <PlayList/>
+      </nav>
+      <div className='mt-5 w-full'>
+              <Outlet />
+      </div>
     </div>
   );
 }

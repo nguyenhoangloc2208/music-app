@@ -27,7 +27,7 @@ export default function useSearch() {
         Error,
         string,
         {q: string}
-    >(`api/youtube/v3/search`, getDataWithArgs);
+    >(`api/youtube/v3/search?type=video&maxResults=6`, getDataWithArgs);
 
     const processedData = data ? data.items.map(item => ({
         id: item.id.videoId,

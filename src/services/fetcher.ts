@@ -41,7 +41,7 @@ export async function getDataWithArgs<
         for (const [key, value] of Object.entries(arg)) {
             queryString += `&${key}=${value}`;
         }
-        const response: AxiosResponse<Data> = await axios.get(`${url}?${queryString.replace('&', '')}`);
+        const response: AxiosResponse<Data> = await axios.get(`${url}&${queryString.replace('&', '')}`);
 
         return response.data;
     } catch (error) {

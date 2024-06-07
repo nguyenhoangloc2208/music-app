@@ -19,8 +19,6 @@ export default ({ mode }: { mode: string }): UserConfig => {
               youtubeApiUrl + path.replace(/^\/api/, ''),
             );
             
-            urlObj.searchParams.set('type', 'video');
-            urlObj.searchParams.set('maxResults', '6');
             urlObj.searchParams.set('part', 'snippet');
             urlObj.searchParams.set(
               'key',

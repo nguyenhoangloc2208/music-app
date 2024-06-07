@@ -4,6 +4,7 @@ import { IconPlay } from "../../../icons/IconPlay";
 import { useSetAtom } from "jotai";
 import { playListAtom } from "../../../../atoms/playListAtom";
 import { debounce } from "@mui/material";
+import IconSearch from "../../../icons/IconSearch";
 
 export default function SearchModal() {
     const [error, setError] = useState<string | null>(null);
@@ -21,12 +22,13 @@ export default function SearchModal() {
     const search = useCallback(
         async (value: string) => {
             setLoading(true);
-            try {
-                const result = await trigger({ q: value });
+            if(value !== ''){
+                try {
+                    const result = await trigger({ q: value });
                 
                 if (result.items.length > 0) {
                     setSongs(result.items)
-                    setError(null);
+                setError(null);
                 } else {
                     setError('No songs found');
                 }
@@ -35,6 +37,9 @@ export default function SearchModal() {
             } finally {
                 setLoading(false);
             }
+        } else{
+            setLoading(false);
+        }
         },
         [trigger]
     );
@@ -93,12 +98,8 @@ export default function SearchModal() {
         <div>
             <div className="fixed top-20 left-1/2 -translate-x-1/2 max-w-[600px] w-full z-40 px-4 sm:px-0">
                 <div className="w-full relative">
-                    <img
-                        src="/images/search.png"
-                        alt="search icon"
-                        width={22}
-                        height={22}
-                        className="absolute top-1/2 -translate-y-1/2 ml-4"
+                    <IconSearch
+                        className="absolute top-1/2 -translate-y-1/2 ml-4 fill-black text-xl"
                     />
                     <input
                         ref={inputRef}

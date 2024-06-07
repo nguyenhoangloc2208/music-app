@@ -1,17 +1,18 @@
 import { useEffect, useRef, useState } from "react";
-import { getAudio } from "../../services/fetcher";
-import { IconPlay } from "../icons/IconPlay";
+import { getAudio } from "../../../../services/fetcher";
+import { IconPlay } from "../../../../components/icons/IconPlay";
 import { useAtom } from "jotai";
-import { selectedSongAtom } from "../../atoms/selectedSongAtom";
-import { playListAtom } from "../../atoms/playListAtom";
-import { IconPause } from "../icons/IconPause";
-import { IconSpeakerWave } from "../icons/IconSpeakerWave";
-import { IconPrevious } from "../icons/IconPrevious";
-import { IconNext } from "../icons/IconNext";
-import { IconLoop } from "../icons/IconLoop";
-import { IconRandom } from "../icons/IconRandom";
-import { IconYoutube } from "../icons/IconYoutube";
-import { IconSpeakerX } from "../icons/IconSpeakerX";
+import { selectedSongAtom } from "../../../../atoms/selectedSongAtom";
+import { playListAtom } from "../../../../atoms/playListAtom";
+import { IconPause } from "../../../../components/icons/IconPause";
+import { IconSpeakerWave } from "../../../../components/icons/IconSpeakerWave";
+import { IconPrevious } from "../../../../components/icons/IconPrevious";
+import { IconNext } from "../../../../components/icons/IconNext";
+import { IconLoop } from "../../../../components/icons/IconLoop";
+import { IconRandom } from "../../../../components/icons/IconRandom";
+import { IconYoutube } from "../../../../components/icons/IconYoutube";
+import { IconSpeakerX } from "../../../../components/icons/IconSpeakerX";
+import { optionsAtom } from "../../../../atoms/optionsAtom";
 
 export default function PlaySong() {
     const [audioUrl, setAudioUrl] = useState<string>('');
@@ -26,8 +27,7 @@ export default function PlaySong() {
     const [audioChangeCounter, setAudioChangeCounter] = useState(0);
     const [isVolumeAppear, setIsVolumneAppear] = useState<boolean>(false);
     const [volume, setVolume] = useState<number>(1);
-    const [isLoop, setIsLoop] = useState<boolean>(false);
-    const [isRandom, setIsRandom] = useState<boolean>(false);
+    const [options, setOptions] = useAtom(optionsAtom);
 
     useEffect(() => {
         setAudioChangeCounter(prevCounter => prevCounter + 1);
@@ -74,8 +74,8 @@ export default function PlaySong() {
                 ];
                 setMinTime(`${h > 0 ? `${h}:` : ""}${m}:${s < 10 ? `0${s}` : s}`);
                 setCurrentTime(current);
-                if (current === duration && !isLoop) {
-                    if(!isRandom){
+                if (current === duration && !options.isLoop) {
+                    if(!options.isRandom){
                         nextSong();
                     }else{
                         randomSong();
@@ -92,10 +92,10 @@ export default function PlaySong() {
             });
             audio.onloadedmetadata = updateMetadata;
             audio.ontimeupdate = updateTime;
-            if(isLoop){
-                audio.loop = isLoop;
+            if(options.isLoop){
+                audio.loop = options.isLoop;
             }else{
-                if(isRandom){
+                if(options.isRandom){
                     audio.onended = randomSong;
                 }else{
                     audio.onended = nextSong;
@@ -106,9 +106,9 @@ export default function PlaySong() {
 
     useEffect(() => {
         if (audioRef.current) {
-            audioRef.current.loop = isLoop;
+            audioRef.current.loop = options.isLoop;
         }
-    }, [isLoop]);
+    }, [options.isLoop]);
 
     useEffect(() => {
         if (audioRef.current) {
@@ -126,16 +126,23 @@ export default function PlaySong() {
     };
 
     const nextSong = () => {
-        const currentIndex = playList.findIndex(song => song.id.videoId === selectedSong.id.videoId);
-        if (currentIndex + 1 < playList.length) {
-            setSelectedSong(playList[currentIndex + 1]);
-        } else {
-            const audio = audioRef.current
-            if(audio){
-                audio.pause()
-                setIsPlaying(false);
+        if(options.isRandom) {
+            randomSong();
+        }else{
+            const currentIndex = playList.findIndex(song => song.id.videoId === selectedSong.id.videoId);
+            if (currentIndex + 1 < playList.length) {
+                setSelectedSong(playList[currentIndex + 1]);
+            } else {
+                const audio = audioRef.current
+                if(audio){
+                    if(options.isRandom){
+                        randomSong();
+                    } else{
+                        alert("Running out of songs in the playlist");
+                        console.log('random', options.isRandom);
+                    }
+                }
             }
-            alert("Running out of songs in the playlist");
         }
     };
 
@@ -169,7 +176,7 @@ export default function PlaySong() {
     };
 
     return (
-        <div className="mt-36 w-full max-w-[900px] flex flex-col mx-4 md:mx-auto items-center md:items-start md:flex-row z-20">
+        <div className="md:mt-36 mt-20 w-full max-w-[900px] min-w-[300px] flex flex-col md:mx-auto items-center md:items-start md:flex-row z-20">
             <div
                     className="w-[250px] h-[250px] mr-5 relative rounded-full cursor-pointer mb-3 md:mb-0 bg-black"
                     onClick={togglePlay}
@@ -270,10 +277,20 @@ export default function PlaySong() {
                             />
                     </div>
                     <IconRandom
-                        className={`${isRandom ? "fill-black hover:scale-110" : "fill-gray-500 hover:scale-110"} cursor-pointer transition-transform transform hover:scale-110 `}
+                        className={`${options.isRandom ? "fill-black hover:scale-110" : "fill-gray-500 hover:scale-110"} cursor-pointer transition-transform transform hover:scale-110 `}
                         onClick={() => 
-                            {setIsRandom(!isRandom)
-                            setIsLoop(false)}
+                            {if(options.isRandom){
+                                setOptions((prev) => ({
+                                    ...prev,
+                                    isRandom: false,
+                                }))
+                            }else{
+                                setOptions((prev) => ({
+                                    ...prev,
+                                    isRandom: true,
+                                    isLoop: false
+                                }))
+                            }}
                         }
                     />
                     <IconPrevious
@@ -296,10 +313,20 @@ export default function PlaySong() {
                         onClick={nextSong}
                     />
                     <IconLoop
-                        className={`${isLoop ? "fill-black scale-110 hover:scale-110" : "fill-gray-500 hover:scale-110"} cursor-pointer transition-transform transform hover:scale-110 `}
+                        className={`${options.isLoop ? "fill-black scale-110 hover:scale-110" : "fill-gray-500 hover:scale-110"} cursor-pointer transition-transform transform hover:scale-110 `}
                         onClick={() => 
-                            {setIsLoop(!isLoop)
-                            setIsRandom(false)}
+                            {if(options.isLoop){
+                                setOptions((prev) => ({
+                                    ...prev,
+                                    isLoop: false,
+                                }))
+                            }else{
+                                setOptions((prev) => ({
+                                    ...prev,
+                                    isLoop: true,
+                                    isRandom: false
+                                }))
+                            }}
                         }
                     />
                     <a

@@ -1,10 +1,10 @@
 import { useAtom } from "jotai";
-import { playListAtom } from "../../atoms/playListAtom";
-import { YoutubeSong } from "../../hooks/useSearch";
-import { IconEllipsis } from "../icons/IconEllipsis";
+import { playListAtom } from "../../../../atoms/playListAtom";
+import { YoutubeSong } from "../../../../hooks/useSearch";
+import { IconEllipsis } from "../../../../components/icons/IconEllipsis";
 import { useCallback } from "react";
-import { selectedSongAtom } from "../../atoms/selectedSongAtom";
-import { IconPlay } from "../icons/IconPlay";
+import { selectedSongAtom } from "../../../../atoms/selectedSongAtom";
+import { IconPlay } from "../../../../components/icons/IconPlay";
 
 export default function PlayList(){
     const [playList] = useAtom(playListAtom);
@@ -15,7 +15,7 @@ export default function PlayList(){
     }, [setSelectedSong]);
 
     return(
-        <div className="w-full mt-20 mx-4 md:mx-auto mb-10">
+        <div className="w-full mt-20 md:mx-auto mb-10">
             <h2 className="mb-5 font-bold text-2xl">
                 PlayList
             </h2>
