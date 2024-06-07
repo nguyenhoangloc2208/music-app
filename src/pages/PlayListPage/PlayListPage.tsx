@@ -47,7 +47,7 @@ export default function PlayListPage() {
     if(loading) return (
         <div className='mt-12'>
             {Array.from({ length: 9 }).map((_, index) => (
-                <div key={index} className="stack w-1/3 p-2 mt-5 mb-16 h-[150px]">
+                <div key={index} className="stack md:w-1/3 w-1/2 p-2 mt-5 mb-16 h-[150px]">
                     <div className="h-full skeleton rounded"></div>
                     <div className="skeleton h-12 w-full mt-4"></div>
                 </div>
@@ -61,7 +61,7 @@ export default function PlayListPage() {
                 results && results.map((item: YoutubePlayListInfo) => (
                     <div 
                         key={item.id} 
-                        className="stack w-1/3 p-2 mt-5 cursor-pointer transition-transform transform hover:scale-105"
+                        className="stack mb-2 md:w-1/3 w-1/2 p-2 mt-5 cursor-pointer transition-transform transform hover:scale-105"
                         onClick={() => onPlayListClick(item.id)}
                     >
                         <img src={item.snippet.thumbnails.high.url} className="h-[74%] object-cover transform translate-y-0 scale-100 opacity-100 !important rounded"/>

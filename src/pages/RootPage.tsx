@@ -3,7 +3,7 @@ import NavBar from "../components/NavBar/NavBar";
 
 export default function RootPage(){
   return(
-    <div className="mx-auto p-5 flex h-full max-w-[900px] min-w-[300px] flex-col items-center">
+    <div className="bg-white mx-auto p-5 flex h-full max-w-[900px] min-w-[300px] flex-col items-center">
       <nav>
         <NavBar/>
       </nav>
