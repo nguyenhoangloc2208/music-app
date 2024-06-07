@@ -13,15 +13,17 @@ import { IconRandom } from "../../../../components/icons/IconRandom";
 import { IconYoutube } from "../../../../components/icons/IconYoutube";
 import { IconSpeakerX } from "../../../../components/icons/IconSpeakerX";
 import { optionsAtom } from "../../../../atoms/optionsAtom";
+import { youtubePlayListAtom } from "../../../../atoms/youtubePlayList";
 
 export default function PlaySong() {
     const [audioUrl, setAudioUrl] = useState<string>('');
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const audioRef = useRef<HTMLAudioElement>(null);
     const [currentTime, setCurrentTime] = useState<number>(0);
-    const [duration, setDuration] = useState<number>(0);
+    const [duration, setDuration] = useState<number>(10);
     const [selectedSong, setSelectedSong] = useAtom(selectedSongAtom);
     const [playList] = useAtom(playListAtom);
+    const [youtubePlayList] = useAtom(youtubePlayListAtom);
     const [maxTime, setMaxTime] = useState<string>("0:00");
     const [minTime, setMinTime] = useState<string>("0:00");
     const [audioChangeCounter, setAudioChangeCounter] = useState(0);
@@ -37,6 +39,8 @@ export default function PlaySong() {
         const fetchAudio = async (videoId: string) => {
             try {
                 const response: string = await getAudio(videoId);
+                console.log(videoId);
+                
                 setAudioUrl(response);
             } catch (error) {
                 console.error('Error fetching audio URL:', error);
@@ -81,7 +85,7 @@ export default function PlaySong() {
                         randomSong();
                     }
                 }
-                }
+            }
         };
 
         const audio = audioRef.current;
@@ -94,12 +98,6 @@ export default function PlaySong() {
             audio.ontimeupdate = updateTime;
             if(options.isLoop){
                 audio.loop = options.isLoop;
-            }else{
-                if(options.isRandom){
-                    audio.onended = randomSong;
-                }else{
-                    audio.onended = nextSong;
-                }
             }
         }
     }, [audioChangeCounter]);
@@ -129,9 +127,10 @@ export default function PlaySong() {
         if(options.isRandom) {
             randomSong();
         }else{
-            const currentIndex = playList.findIndex(song => song.id.videoId === selectedSong.id.videoId);
-            if (currentIndex + 1 < playList.length) {
-                setSelectedSong(playList[currentIndex + 1]);
+            const playlist = options.myPlaylist ? playList : youtubePlayList;
+            const currentIndex = playlist.findIndex(song => song.id.videoId === selectedSong.id.videoId);
+            if (currentIndex + 1 < playlist.length) {
+                setSelectedSong(playlist[currentIndex + 1]);
             } else {
                 const audio = audioRef.current
                 if(audio){
@@ -147,18 +146,20 @@ export default function PlaySong() {
     };
 
     const prevSong = () => {
-        const currentIndex = playList.findIndex(song => song.id.videoId === selectedSong.id.videoId);
+        const playlist = options.myPlaylist ? playList : youtubePlayList;
+        const currentIndex = playlist.findIndex(song => song.id.videoId === selectedSong.id.videoId);
         if (currentIndex !== 0) {
-            setSelectedSong(playList[currentIndex -1]);
+            setSelectedSong(playlist[currentIndex -1]);
         } else {
             alert("No more previous song");
         }
     };
 
     const randomSong = () => {
-        const totalSong = playList.length;
+        const playlist = options.myPlaylist ? playList : youtubePlayList;
+        const totalSong = playlist.length;
         const randomSongIndex = Math.ceil(Math.random() * totalSong) - 1;
-        setSelectedSong(playList[randomSongIndex])
+        setSelectedSong(playlist[randomSongIndex])
     }
 
     const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {

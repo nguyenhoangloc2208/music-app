@@ -36,10 +36,10 @@ export default function NavBar() {
                     </p>
                 </p>
                 <div className="flex items-center"
-                    onClick={onPlayListPage}
                 >
                     <p
                         className="text-sm md:block text-gray-500 cursor-pointer"
+                        onClick={onPlayListPage}
                     >
                         Beru playlists
                     </p>

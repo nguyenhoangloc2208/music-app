@@ -1,10 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import playListIds from './playListIds.json';
 import { YoutubePlayListInfo, fetchPlaylistInfo } from '../../services/fetchPlayList';
+import { useSetAtom } from 'jotai';
+import { optionsAtom } from '../../atoms/optionsAtom';
+import { youtubePlayListAtom } from '../../atoms/youtubePlayList';
+import { fetchPlaylistItem } from '../../services/fetchPlayListItem';
+import { useNavigate } from 'react-router-dom';
+import { selectedSongAtom } from '../../atoms/selectedSongAtom';
 
 export default function PlayListPage() {
     const [results, setResults] = useState<any>();
     const [loading, setIsLoading] = useState<boolean>(true);
+    const setOptions = useSetAtom(optionsAtom);
+    const setYoutubesPlayList = useSetAtom(youtubePlayListAtom);
+    const setSelectedSong = useSetAtom(selectedSongAtom);
+    const navigate = useNavigate();
 
     useEffect(()=> {
         if(!results){
@@ -18,6 +28,22 @@ export default function PlayListPage() {
         }
     }, [results]);
 
+    const onPlayListClick = useCallback(async (id: string) => {
+        try {
+            await fetchPlaylistItem(id).then((response) => {
+                setSelectedSong(response[0]);
+                setYoutubesPlayList(response);
+            });
+            setOptions(prev => ({
+                ...prev,
+                myPlaylist: false
+            }));
+            navigate('/');
+        } catch (error) {
+            console.error('Error fetching playlist item:', error);
+        }
+    }, [navigate]);
+
     if(loading) return (
         <div className='mt-12'>
             {Array.from({ length: 9 }).map((_, index) => (
@@ -28,10 +54,6 @@ export default function PlayListPage() {
             ))}
         </div>
     )
-
-    const onPlayListClick = (id: string) => {
-        alert(id)
-    }
 
     return (
         <div className='mx-auto h-full w-full min-w-[300px] items-center'>
