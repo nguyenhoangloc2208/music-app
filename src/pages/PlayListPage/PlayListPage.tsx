@@ -47,8 +47,8 @@ export default function PlayListPage() {
     if(loading) return (
         <div className='mt-12'>
             {Array.from({ length: 9 }).map((_, index) => (
-                <div key={index} className="stack md:w-1/3 w-1/2 p-2 mt-5 mb-16 h-[150px]">
-                    <div className="h-full skeleton rounded"></div>
+                <div key={index} className="stack bg-none md:w-1/3 w-1/2 p-2 mt-5 mb-16 h-[150px]">
+                    <div className="bg-gray-200 h-full skeleton rounded"></div>
                     <div className="skeleton h-12 w-full mt-4"></div>
                 </div>
             ))}
