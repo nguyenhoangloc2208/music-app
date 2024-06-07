@@ -39,8 +39,6 @@ export default function PlaySong() {
         const fetchAudio = async (videoId: string) => {
             try {
                 const response: string = await getAudio(videoId);
-                console.log(videoId);
-                
                 setAudioUrl(response);
             } catch (error) {
                 console.error('Error fetching audio URL:', error);
@@ -78,13 +76,13 @@ export default function PlaySong() {
                 ];
                 setMinTime(`${h > 0 ? `${h}:` : ""}${m}:${s < 10 ? `0${s}` : s}`);
                 setCurrentTime(current);
-                if (current === duration && !options.isLoop) {
-                    if(!options.isRandom){
-                        nextSong();
-                    }else{
-                        randomSong();
-                    }
-                }
+                // if (current === duration && !options.isLoop) {
+                //     if(!options.isRandom){
+                //         nextSong();
+                //     }else{
+                //         randomSong();
+                //     }
+                // }
             }
         };
 
@@ -98,6 +96,8 @@ export default function PlaySong() {
             audio.ontimeupdate = updateTime;
             if(options.isLoop){
                 audio.loop = options.isLoop;
+            } else{
+                audio.onended = nextSong;
             }
         }
     }, [audioChangeCounter]);
@@ -271,7 +271,7 @@ export default function PlaySong() {
                                 value={volume}
                                 className={`${
                                     isVolumeAppear ? "block" : "hidden"
-                                } absolute left-1/2 -translate-x-1/2 h-1 bg-white dark:bg-black rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:h-[10px] [&::-webkit-slider-thumb]:w-[10px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black dark:[&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-runnable-track]:rounded-lg [&::-webkit-slider-runnable-track]:bg-black/25 dark:[&::-webkit-slider-runnable-track]:bg-white/25 p-3 shadow-md`}
+                                } absolute left-1/2 -translate-x-1/2 h-1 bg-white rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:h-[10px] [&::-webkit-slider-thumb]:w-[10px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-runnable-track]:rounded-lg [&::-webkit-slider-runnable-track]:bg-black/25 p-3 shadow-md`}
                                 onChange={(event) => {
                                     setVolume(event.target.valueAsNumber);
                                 }}

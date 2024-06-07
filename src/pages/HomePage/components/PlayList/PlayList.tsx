@@ -7,11 +7,12 @@ import { selectedSongAtom } from "../../../../atoms/selectedSongAtom";
 import { IconPlay } from "../../../../components/icons/IconPlay";
 import { optionsAtom } from "../../../../atoms/optionsAtom";
 import { youtubePlayListAtom } from "../../../../atoms/youtubePlayList";
+import { IconLoop } from "../../../../components/icons/IconLoop";
 
 export default function PlayList(){
     const [playList] = useAtom(playListAtom);
     const [selectedSong, setSelectedSong] = useAtom(selectedSongAtom);
-    const [options] = useAtom(optionsAtom);
+    const [options, setOptions] = useAtom(optionsAtom);
     const [youtubePlayList] = useAtom(youtubePlayListAtom);
 
     const onSongClick = useCallback((play: any) => {
@@ -20,9 +21,23 @@ export default function PlayList(){
 
     return(
         <div className="w-full mt-20 md:mx-auto mb-10">
-            <h2 className="mb-5 font-bold text-2xl">
-                PlayList
-            </h2>
+            <div className="flex items-center">
+                <h2 className="mb-5 font-bold text-2xl">
+                    {options.myPlaylist ? 
+                        "PlayList"
+                        :
+                        `Mix - ${selectedSong.snippet.title}`
+                        }
+                </h2>
+                <IconLoop className="ml-5 mb-5 cursor-pointer transition-transform transform hover:scale-110"
+                    onClick={() =>
+                        setOptions(prev => ({
+                            ...prev,
+                            myPlaylist: !options.myPlaylist
+                        }))
+                    }
+                />
+            </div>
             <hr />
             <div className="h-80 overflow-auto">
                 {options.myPlaylist ?
