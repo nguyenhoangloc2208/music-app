@@ -74,7 +74,7 @@ export default function PlayListPage() {
     )
 
     return (
-        <div className='mx-auto h-full w-full min-h-[1000px] min-w-[300px] items-center'>
+        <div className='bg-white mx-auto h-full w-full min-h-[1000px] min-w-[300px] items-center'>
             {
                 results && results.map((item: YoutubePlayListInfo) => (
                     <div 
