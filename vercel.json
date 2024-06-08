@@ -1,13 +1,10 @@
 { "framework": "vite",
   "public": true,
   "installCommand": "npm install -f",
-  "env": {
-    "VITE_YOUTUBE_API_KEY": "AIzaSyBmifc4eeHdWBHIm4r_WCPZDi2v6AZbUiA"
-  },
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://youtube.googleapis.com/:path*?key=AIzaSyDS1e5KDhK0gpqMn01hH_zeja67wKDYBks&part=snippet"
+      "destination": "https://youtube.googleapis.com/:path*?key=AIzaSyBmifc4eeHdWBHIm4r_WCPZDi2v6AZbUiA&part=snippet"
     }
   ]
 }
