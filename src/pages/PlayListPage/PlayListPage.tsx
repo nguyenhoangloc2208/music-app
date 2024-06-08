@@ -1,38 +1,56 @@
 import { useCallback, useEffect, useState } from 'react';
 import playListIds from './playListIds.json';
 import { YoutubePlayListInfo, fetchPlaylistInfo } from '../../services/fetchPlayList';
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { optionsAtom } from '../../atoms/optionsAtom';
 import { youtubePlayListAtom } from '../../atoms/youtubePlayList';
 import { fetchPlaylistItem } from '../../services/fetchPlayListItem';
 import { useNavigate } from 'react-router-dom';
 import { selectedSongAtom } from '../../atoms/selectedSongAtom';
+import { YoutubePlayListInfoAtom } from '../../atoms/youtubePlayListInfo';
 
 export default function PlayListPage() {
     const [results, setResults] = useState<any>();
     const [loading, setIsLoading] = useState<boolean>(true);
     const setOptions = useSetAtom(optionsAtom);
-    const setYoutubesPlayList = useSetAtom(youtubePlayListAtom);
+    const setYoutubePlayList = useSetAtom(youtubePlayListAtom);
     const setSelectedSong = useSetAtom(selectedSongAtom);
+    const setYoutubePlayListInfo = useSetAtom(YoutubePlayListInfoAtom);
+    const youtubePlayListInfo = useAtomValue(YoutubePlayListInfoAtom);
     const navigate = useNavigate();
+    const [count, setCount] = useState<number>(0);
 
     useEffect(()=> {
-        if(!results){
-            fetchPlaylistInfo(playListIds).then((results) => {
-                setResults(results);
-                setIsLoading(false);
-            })
-            .catch((error) => {
-                console.error("Error fetching playlist info:", error);
-            });
+        setIsLoading(true);
+        setCount(count+1);
+        if(youtubePlayListInfo.length === 0 && count > 0){
+            setCount(0);
+            fetchPlaylistInfo(playListIds)
+                .then((results) => {
+                    setResults(results);
+                    setYoutubePlayListInfo(results);
+                    setIsLoading(false);
+                })
+                .catch((error) => {
+                    setCount(0);
+                    console.error("Error fetching playlist info:", error);
+                });
+        } else if (count > 0) {
+            setCount(0);
+            setResults(youtubePlayListInfo);
+            setIsLoading(false);
+            return;
+        } else {
+            setIsLoading(false);
+            return;
         }
-    }, [results]);
+    }, []);
 
     const onPlayListClick = useCallback(async (id: string) => {
         try {
             await fetchPlaylistItem(id).then((response) => {
                 setSelectedSong(response[0]);
-                setYoutubesPlayList(response);
+                setYoutubePlayList(response);
             });
             setOptions(prev => ({
                 ...prev,
@@ -56,7 +74,7 @@ export default function PlayListPage() {
     )
 
     return (
-        <div className='mx-auto h-full w-full min-w-[300px] items-center'>
+        <div className='mx-auto h-full w-full min-h-[1000px] min-w-[300px] items-center'>
             {
                 results && results.map((item: YoutubePlayListInfo) => (
                     <div 

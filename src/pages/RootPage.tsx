@@ -7,7 +7,7 @@ export default function RootPage(){
       <nav>
         <NavBar/>
       </nav>
-      <div className='mt-5 w-full'>
+      <div className='mt-5 bg-white h-96 w-full'>
               <Outlet />
       </div>
     </div>
