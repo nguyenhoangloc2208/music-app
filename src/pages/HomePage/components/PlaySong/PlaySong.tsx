@@ -203,20 +203,16 @@ export default function PlaySong() {
                     </div>
                 )}
                 {isPlaying ? (
-                    <IconPause className="cursor-pointer fill-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                    <IconPause className="cursor-pointer fill-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform transform hover:scale-110" />
                 ) : (
-                    <IconPlay className="cursor-pointer fill-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                    <IconPlay className="cursor-pointer fill-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform transform hover:scale-110" />
                 )}
             </div>
             <div className="md:max-w-[500px] w-full">
                 <div>
                     {selectedSong.snippet.title ? (
-                        <h2 className="font-bold text-4xl mb-2 h-[5.4rem] overflow-hidden">
-                            {selectedSong.snippet.title?.length >= 45 ? (
-                                <>{selectedSong.snippet.title}</>
-                            ) : (
-                                selectedSong.snippet.title
-                            )}
+                        <h2 className="font-bold text-4xl mb-2 h-20 overflow-hidden">
+                            {selectedSong.snippet.title}
                         </h2>
                     ) : (
                         <h2 className="font-bold text-4xl mb-2">

@@ -28,14 +28,14 @@ export default function PlayList(){
     return(
         <div className="w-full mt-20 md:mx-auto mb-10">
             <div className="flex items-center">
-                <h2 className="mb-5 font-bold text-2xl">
+                <h2 className="mb-5 font-bold text-2xl w-5/6 overflow-hidden max-h-[4rem]">
                     {options.myPlaylist ? 
                         "PlayList"
                         :
                         `${document.title.split(" || ")[1] ? document.title.split(" || ")[1] : `Mix - ${selectedSong.snippet.title}`}`
                         }
                 </h2>
-                <IconLoop className="ml-5 mb-5 cursor-pointer transition-transform transform hover:scale-110"
+                <IconLoop className="ml-5 mb-5 cursor-pointer transition-transform transform hover:scale-110 w-1/6"
                     onClick={() =>
                         setOptions(prev => ({
                             ...prev,
@@ -86,9 +86,10 @@ export default function PlayList(){
                                                     {play.snippet.channelTitle}
                                                 </p>
                                             </div>
-                                            <div className="absolute right-10">
+                                            <div className="transition-transform transform hover:scale-110 absolute w-6 h-6 rounded-full flex justify-center items-center hover:bg-gray-200 md:right-10 right-4">
                                                 <IconEllipsis
-                                                    className="cursor-pointer"
+                                                    className="fill-gray-700 text-xl cursor-pointer transition-transform transform"
+                                                    onClick={() => alert('Này chưa làm nhé em iu')}
                                                 />
                                             </div>
                                         </div>
@@ -126,7 +127,7 @@ export default function PlayList(){
                                             <div className="mr-4"></div>
                                         }
                                         <div
-                                            className={`relative flex flex-1 hover:bg-[#f3f5f7] transition-all py-[10px] items-center rounded-lg mb-2 cursor-pointer
+                                            className={`relative mr-4 px-2 flex flex-1 hover:bg-[#f3f5f7] transition-all py-[10px] items-center rounded-lg mb-2 cursor-pointer
                                             ${selectedSong.id.videoId != play.id.videoId ? 'bg-white' : 'bg-[#f3f5f7]'}
                                             `}
                                         >
@@ -140,16 +141,17 @@ export default function PlayList(){
                                                     />
                                             </div>
                                             <div>
-                                                <h4 className="text-base font-semibold h-6 overflow-hidden">
+                                                <h4 className="text-base font-semibold h-12 mr-6 overflow-hidden">
                                                     {play.snippet.title}
                                                 </h4>
                                                 <p className="font-mono text-sm text-gray-500">
                                                     {play.snippet.channelTitle}
                                                 </p>
                                             </div>
-                                            <div className="absolute right-10">
+                                            <div className="transition-transform transform hover:scale-110 absolute w-6 h-6 rounded-full flex justify-center items-center hover:bg-gray-200 md:right-10 right-4">
                                                 <IconEllipsis
-                                                    className="cursor-pointer"
+                                                    className="fill-gray-700 text-xl cursor-pointer transition-transform transform"
+                                                    onClick={() => alert('Này chưa làm nhé em iu')}
                                                 />
                                             </div>
                                         </div>

@@ -200,6 +200,17 @@ const youtubePlayListInfos: YoutubePlayListInfo[] = [
                 },
             },
         }
+    },
+    {
+        id: "PLgJHC0Q8y9LI92tD0SXnevs8IbbwC_Z_I",
+        snippet: {
+            title: "Music Spacer",
+            thumbnails: {
+                high: {
+                    url: "https://i.ytimg.com/vi/SeWt7IpZ0CA/hqdefault.jpg",
+                },
+            },
+        }
     }
 ]
 
