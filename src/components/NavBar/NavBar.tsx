@@ -1,20 +1,18 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import IconSearch from "../icons/IconSearch";
 import { Modal } from "@mui/material";
 import SearchModal from "./components/SearchModal/SearchModal";
 import { useNavigate } from "react-router-dom";
+import PropTypes from 'prop-types';
 
-export default function NavBar() {
-    const [isOpen, setIsOpen] = useState(false);
+interface NavBarProps {
+    isOpen: boolean;
+    handleOpen: () => void;
+    handleClose: () => void;
+}
+
+const NavBar: React.FC<NavBarProps> = ({ isOpen, handleOpen, handleClose }) => {
     const navigate = useNavigate();
-
-    const handleOpen = () => {
-        setIsOpen(true);
-    };
-
-    const handleClose = () => {
-        setIsOpen(false);
-    };
 
     const onPlayListPage = useCallback(() => {
         navigate('/playlist');
@@ -62,3 +60,11 @@ export default function NavBar() {
         </div>
     );
 }
+
+NavBar.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    handleOpen: PropTypes.func.isRequired,
+    handleClose: PropTypes.func.isRequired,
+};
+
+export default NavBar;

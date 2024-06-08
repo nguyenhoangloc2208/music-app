@@ -89,6 +89,7 @@ export default function PlaySong() {
         const audio = audioRef.current;
         if(audio && audioUrl) {
             audio.src = audioUrl;
+            if(!isPlaying)
             audio.play().then(() => {
                 setIsPlaying(true);
             });
@@ -117,13 +118,14 @@ export default function PlaySong() {
     const togglePlay = () => {
         const audio = audioRef.current;
         if (audio) {
-            if (isPlaying == false) audio.play();
+            if (!isPlaying) audio.play();
             else audio.pause();
             setIsPlaying(!isPlaying);
         }
     };
 
     const nextSong = () => {
+        setIsPlaying(false);
         if(options.isRandom) {
             randomSong();
         }else{
@@ -138,7 +140,6 @@ export default function PlaySong() {
                         randomSong();
                     } else{
                         alert("Running out of songs in the playlist");
-                        console.log('random', options.isRandom);
                     }
                 }
             }
@@ -146,6 +147,7 @@ export default function PlaySong() {
     };
 
     const prevSong = () => {
+        setIsPlaying(false);
         const playlist = options.myPlaylist ? playList : youtubePlayList;
         const currentIndex = playlist.findIndex(song => song.id.videoId === selectedSong.id.videoId);
         if (currentIndex !== 0) {
@@ -156,6 +158,7 @@ export default function PlaySong() {
     };
 
     const randomSong = () => {
+        setIsPlaying(false);
         const playlist = options.myPlaylist ? playList : youtubePlayList;
         const totalSong = playlist.length;
         const randomSongIndex = Math.ceil(Math.random() * totalSong) - 1;
@@ -177,7 +180,7 @@ export default function PlaySong() {
     };
 
     return (
-        <div className="md:mt-36 mt-20 w-full max-w-[900px] min-w-[300px] flex flex-col md:mx-auto items-center md:items-start md:flex-row z-20">
+        <div className="md:mt-32 mt-20 w-full max-w-[900px] min-w-[300px] flex flex-col md:mx-auto items-center md:items-start md:flex-row z-20">
             <div
                     className="w-[250px] h-[250px] mr-5 relative rounded-full cursor-pointer mb-3 md:mb-0 bg-black"
                     onClick={togglePlay}
@@ -208,7 +211,7 @@ export default function PlaySong() {
             <div className="md:max-w-[500px] w-full">
                 <div>
                     {selectedSong.snippet.title ? (
-                        <h2 className="font-bold text-4xl mb-2 h-20 overflow-hidden">
+                        <h2 className="font-bold text-4xl mb-2 h-[5.4rem] overflow-hidden">
                             {selectedSong.snippet.title?.length >= 45 ? (
                                 <>{selectedSong.snippet.title}</>
                             ) : (
@@ -298,17 +301,19 @@ export default function PlaySong() {
                         className="cursor-pointer transition-transform transform hover:scale-110"
                         onClick={prevSong}
                     />
-                    {isPlaying ? 
-                        <IconPause
-                            className="cursor-pointer transition-transform transform hover:scale-110"
-                            onClick={togglePlay}
-                        />
-                    :
-                        <IconPlay
-                            className="cursor-pointer transition-transform transform hover:scale-110"
-                            onClick={togglePlay}
-                        />
-                    }
+                    <div className="w-14 h-14 bg-black flex justify-center items-center rounded-full">
+                        {isPlaying ? 
+                            <IconPause
+                                className="cursor-pointer fill-white transition-transform transform hover:scale-110"
+                                onClick={togglePlay}
+                            />
+                        :
+                            <IconPlay
+                                className="cursor-pointer fill-white transition-transform transform hover:scale-110"
+                                onClick={togglePlay}
+                            />
+                        }
+                    </div>
                     <IconNext
                         className="cursor-pointer transition-transform transform hover:scale-110"
                         onClick={nextSong}
@@ -330,16 +335,22 @@ export default function PlaySong() {
                             }}
                         }
                     />
-                    <a
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        href={`https://www.youtube.com/watch?v=${selectedSong.id.videoId}`}
-                        onClick={togglePlay}
-                    >
+                    {selectedSong.id.videoId.length > 0 ? (
+                        <a
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href={`https://www.youtube.com/watch?v=${selectedSong.id.videoId}`}
+                            onClick={togglePlay}
+                        >
+                            <IconYoutube
+                                className="cursor-pointer transition-transform transform hover:scale-110 fill-gray-800"
+                            />
+                        </a>
+                    ) : (
                         <IconYoutube
-                            className="cursor-pointer transition-transform transform hover:scale-110 fill-gray-800"
+                            className="transition-transform transform hover:scale-110 fill-gray-500"
                         />
-                    </a>
+                    )}
                 </div>
             </div>
         </div>

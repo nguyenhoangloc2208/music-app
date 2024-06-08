@@ -2,7 +2,7 @@
   "public": true,
   "installCommand": "npm install -f",
   "env": {
-    "VITE_YOUTUBE_API_KEY": "AIzaSyCqxikjz3nqpXTGbOBUFoZ_qLGNJn-BtVk"
+    "VITE_YOUTUBE_API_KEY": "AIzaSyCcYomRMBDRkZpU06xZ8YYJvKEEDxV7R_w"
   },
   "rewrites": [
     {

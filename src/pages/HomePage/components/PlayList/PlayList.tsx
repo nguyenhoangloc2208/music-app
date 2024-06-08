@@ -8,12 +8,18 @@ import { IconPlay } from "../../../../components/icons/IconPlay";
 import { optionsAtom } from "../../../../atoms/optionsAtom";
 import { youtubePlayListAtom } from "../../../../atoms/youtubePlayList";
 import { IconLoop } from "../../../../components/icons/IconLoop";
+import { useOutletContext } from "react-router-dom";
+
+interface OutletContextProps {
+    handleOpen: () => void;
+}
 
 export default function PlayList(){
     const [playList] = useAtom(playListAtom);
     const [selectedSong, setSelectedSong] = useAtom(selectedSongAtom);
     const [options, setOptions] = useAtom(optionsAtom);
     const [youtubePlayList] = useAtom(youtubePlayListAtom);
+    const { handleOpen } = useOutletContext<OutletContextProps>();
 
     const onSongClick = useCallback((play: any) => {
         setSelectedSong(play);
@@ -26,7 +32,7 @@ export default function PlayList(){
                     {options.myPlaylist ? 
                         "PlayList"
                         :
-                        `Mix - ${selectedSong.snippet.title}`
+                        `${document.title.split(" || ")[1] ? document.title.split(" || ")[1] : `Mix - ${selectedSong.snippet.title}`}`
                         }
                 </h2>
                 <IconLoop className="ml-5 mb-5 cursor-pointer transition-transform transform hover:scale-110"
@@ -163,11 +169,14 @@ export default function PlayList(){
                         </div>
                     )
                 }
-                <button
+                {options.myPlaylist &&
+                    <button
                     className="mt-2 active:scale-95 border-none block w-fit mx-auto border py-2 px-10 text-gray-700 hover:bg-gray-200"
+                    onClick={handleOpen}
                     >
                     + Add my song
-                </button>
+                    </button>
+                }
             </div>
         </div>
     )

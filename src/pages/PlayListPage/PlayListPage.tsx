@@ -45,9 +45,9 @@ export default function PlayListPage() {
         setIsLoading(false);
     }, [playListIds, setYoutubePlayListInfo]);
 
-    const onPlayListClick = useCallback(async (id: string) => {
+    const onPlayListClick = useCallback(async (item: YoutubePlayListInfo) => {
         try {
-            await fetchPlaylistItem(id).then((response) => {
+            await fetchPlaylistItem(item.id).then((response) => {
                 setSelectedSong(response[0]);
                 setYoutubePlayList(response);
             });
@@ -55,6 +55,7 @@ export default function PlayListPage() {
                 ...prev,
                 myPlaylist: false
             }));
+            document.title = `BeruMusic || ${item.snippet.title}`;
             navigate('/');
         } catch (error) {
             console.error('Error fetching playlist item:', error);
@@ -79,7 +80,7 @@ export default function PlayListPage() {
                     <div 
                         key={item.id} 
                         className="stack mb-2 md:w-1/3 w-1/2 p-2 mt-5 cursor-pointer transition-transform transform hover:scale-105"
-                        onClick={() => onPlayListClick(item.id)}
+                        onClick={() => onPlayListClick(item)}
                     >
                         <img src={item.snippet.thumbnails.high.url} className="h-[74%] object-cover transform translate-y-0 scale-100 opacity-100 !important rounded"/>
                         <img src={item.snippet.thumbnails.high.url} className="h-[74%] object-cover transform -translate-y-2 scale-95 opacity-80 !important rounded"/>
