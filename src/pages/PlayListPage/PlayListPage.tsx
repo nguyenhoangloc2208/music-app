@@ -18,33 +18,32 @@ export default function PlayListPage() {
     const setYoutubePlayListInfo = useSetAtom(YoutubePlayListInfoAtom);
     const youtubePlayListInfo = useAtomValue(YoutubePlayListInfoAtom);
     const navigate = useNavigate();
-    const [count, setCount] = useState<number>(0);
 
-    useEffect(()=> {
+    useEffect(() => {
         setIsLoading(true);
-        setCount(count+1);
-        if(youtubePlayListInfo.length === 0 && count > 0){
-            setCount(0);
-            fetchPlaylistInfo(playListIds)
-                .then((results) => {
+        const fetchData = async () => {
+            try {
+                if (youtubePlayListInfo.length === 0) {
+                    const results = await fetchPlaylistInfo(playListIds);
                     setResults(results);
                     setYoutubePlayListInfo(results);
-                    setIsLoading(false);
-                })
-                .catch((error) => {
-                    setCount(0);
-                    console.error("Error fetching playlist info:", error);
-                });
-        } else if (count > 0) {
-            setCount(0);
-            setResults(youtubePlayListInfo);
-            setIsLoading(false);
-            return;
+                } else {
+                    setResults(youtubePlayListInfo);
+                }
+            } catch (error) {
+                console.error("Error fetching playlist info:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+    
+        if (youtubePlayListInfo.length === 0) {
+            fetchData();
         } else {
-            setIsLoading(false);
-            return;
+            setResults(youtubePlayListInfo);
         }
-    }, []);
+        setIsLoading(false);
+    }, [playListIds, setYoutubePlayListInfo]);
 
     const onPlayListClick = useCallback(async (id: string) => {
         try {
