@@ -215,6 +215,18 @@ export default function PlaySong() {
         if(audioRef.current && isPlaying === true){
             audioRef.current.play();
         }
+        if (audioRef.current) {
+            const duration = Math.floor(audioRef.current.duration);
+            setDuration(duration);
+            const [h, m, s] = [
+                Math.floor(duration / 3600),
+                Math.floor((duration % 3600) / 60),
+                Math.floor(duration % 60),
+            ];
+            setMaxTime(`${h > 0 ? `${h}:` : ""}${m}:${s < 10 ? `0${s}` : s}`);
+            setCurrentTime(0);
+            setMinTime("0:00");
+        }
     }
 
     const handleAudioError = async () => {        
