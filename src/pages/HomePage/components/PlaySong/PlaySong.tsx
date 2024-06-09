@@ -13,7 +13,7 @@ export default function PlaySong() {
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const audioRef = useRef<HTMLAudioElement>(null);
     const [currentTime, setCurrentTime] = useState<number>(0);
-    const [duration, setDuration] = useState<number>(10);
+    const [duration, setDuration] = useState<number>(0);
     const [selectedSong, setSelectedSong] = useAtom(selectedSongAtom);
     const [playList] = useAtom(playListAtom);
     const [youtubePlayList] = useAtom(youtubePlayListAtom);
@@ -220,6 +220,12 @@ export default function PlaySong() {
         }
     }
 
+    const handleAudioError = async () => {        
+        if(selectedSong.id.videoId.length > 0){
+            fetchAudio(selectedSong.id.videoId)
+        }
+    };
+
     return (
         <div className="md:mt-32 mt-20 w-full max-w-[900px] min-w-[300px] flex flex-col md:mx-auto items-center md:items-start md:flex-row z-20">
             <audio 
@@ -228,7 +234,7 @@ export default function PlaySong() {
                 preload="metadata"
                 src={audioUrl}
                 onLoadedMetadata={handleAudioLoaded}
-                onError={nextSong}
+                onError={handleAudioError}
             />
             <div
                     className="w-[250px] h-[250px] mr-5 relative rounded-full cursor-pointer mb-3 md:mb-0 bg-black"
