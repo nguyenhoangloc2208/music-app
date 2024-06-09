@@ -28,21 +28,21 @@ export default function PlaySong() {
     }, [audioUrl]);
 
     useEffect(() => {
-        const fetchAudio = async (videoId: string) => {
-            try {
-                const response: string = await getAudio(videoId);
-                setAudioUrl(response);
-            } catch (error) {
-                console.error('Error fetching audio URL:', error);
-            }
-        };
-
         if (selectedSong?.id?.videoId) {
             fetchAudio(selectedSong.id.videoId);
         } else {
             setAudioUrl('');
         }
     }, [selectedSong]);
+
+    const fetchAudio = async (videoId: string) => {
+        try {
+            const response: string = await getAudio(videoId);
+            setAudioUrl(response);
+        } catch (error) {
+            console.error('Error fetching audio URL:', error);
+        }
+    };
 
     useEffect(() => {
         const updateMetadata = () => {
@@ -113,6 +113,12 @@ export default function PlaySong() {
             if (!isPlaying) audio.play();
             else audio.pause();
             setIsPlaying(!isPlaying);
+        } else if (audioUrl.length > 0 && selectedSong.id.videoId.length > 0){
+            try{
+                fetchAudio(selectedSong.id.videoId);
+            } catch {
+                alert('Lỗi');
+            }
         }
     };
 
@@ -174,7 +180,7 @@ export default function PlaySong() {
     const handleAudioLoaded = () => {
         if(audioRef.current && isPlaying === true){
             audioRef.current.play();
-        }        
+        }
     }
 
     return (
