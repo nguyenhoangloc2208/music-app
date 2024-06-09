@@ -1,17 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import useSearch, {YoutubeSong } from "../../../../hooks/useSearch";
-import { IconPlay } from "../../../icons/IconPlay";
 import { useSetAtom } from "jotai";
 import { playListAtom } from "../../../../atoms/playListAtom";
 import { debounce } from "@mui/material";
 import IconSearch from "../../../icons/IconSearch";
+import { IconMusicalNote } from "../../../icons/IconMusicalNote";
 
 export default function SearchModal() {
     const [error, setError] = useState<string | null>(null);
     const [songs, setSongs] = useState<YoutubeSong[]>([]);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const [pickedId, setPickedId] = useState<string>("");
     const setPlayList = useSetAtom(playListAtom);
     const { isMutating, trigger } = useSearch();
     
@@ -21,24 +20,18 @@ export default function SearchModal() {
 
     const search = useCallback(
         async (value: string) => {
-            setLoading(true);
-            if(value !== ''){
-                try {
-                    const result = await trigger({ q: value });
-                
-                if (result.items.length > 0) {
-                    setSongs(result.items)
-                setError(null);
-                } else {
-                    setError('No songs found');
-                }
+        if(value !== ''){
+            try {
+                const result = await trigger({ q: value });
+            if (result.items.length > 0) {
+                setSongs(result.items)
+            setError(null);
+            } else {
+                setError('No songs found');
+            }
             } catch (error) {
                 setError('An error occurred while searching');
-            } finally {
-                setLoading(false);
             }
-        } else{
-            setLoading(false);
         }
         },
         [trigger]
@@ -59,7 +52,7 @@ export default function SearchModal() {
     );
     const onSelectSong = useCallback(
         (song: YoutubeSong) => {
-            setPickedId(song.id.videoId);
+            setLoading(true);
             setPlayList((prev) => {
                 const isDuplicate = prev.some((item) => item.id.videoId === song.id.videoId);
                 if (isDuplicate) {
@@ -82,14 +75,11 @@ export default function SearchModal() {
                         }
                         
                     };
-                    console.log(newSong);
-                    console.log(prev);
-                    
-    
                     const newPlayList = [...prev, newSong];
                     return newPlayList;
                 }
             });
+            setLoading(false);
         },
         [setPlayList]
     );
@@ -111,7 +101,7 @@ export default function SearchModal() {
                     />
                 </div>
                 {isMutating && !error && (
-                    <span className='loading loading-spinner loading-sm mt-3 mx-auto block'></span>
+                    <span className='text-white loading loading-spinner loading-sm mt-3 mx-auto block'></span>
                 )}
                 {error && (
                     <div className="text-red-500 mt-3">{error}</div>
@@ -130,10 +120,10 @@ export default function SearchModal() {
                     return (
                         <div
                             key={videoId}
-                            className="my-3 py-[10px] px-[15px] hover:scale-105 bg-white rounded-lg cursor-pointer transition-transform flex justify-between items-center"
+                            className="my-3 py-[10px] px-[15px] hover:scale-105 bg-white rounded-lg cursor-pointer transition-transform flex justify-between items-center relative"
                             onClick={() =>  onSelectSong(song)}
                         >
-                            <div className="flex items-center h-full pr-3">
+                            <div className="flex items-center h-full mr-10">
                                 <img
                                     src={url}
                                     alt="song thumbnail"
@@ -148,18 +138,13 @@ export default function SearchModal() {
                                     </p>
                                 </div>
                             </div>
-                            {pickedId === videoId ? (
-                                loading ? (
-                                    <span className="loading loading-spinner loading-lg mx-auto block"></span>
-                                ) : (
-                                    <IconPlay 
-                                    />
-                                )
-                            ) : (
-                                <IconPlay 
-                                className="hover:scale-125 transition-transform"
-                                />
-                            )}
+                            <div className="absolute right-5">
+                                {!loading ? 
+                                    <IconMusicalNote className="fill-black text-sm"/>
+                                    :
+                                    <span className='loading loading-spinner loading-sm mt-3 mx-auto block'></span>
+                                    }
+                                </div>
                         </div>
                     );
                 })}

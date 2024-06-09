@@ -1,19 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { getAudio } from "../../../../services/fetcher";
-import { IconPlay } from "../../../../components/icons/IconPlay";
 import { useAtom } from "jotai";
 import { selectedSongAtom } from "../../../../atoms/selectedSongAtom";
 import { playListAtom } from "../../../../atoms/playListAtom";
-import { IconPause } from "../../../../components/icons/IconPause";
-import { IconSpeakerWave } from "../../../../components/icons/IconSpeakerWave";
-import { IconPrevious } from "../../../../components/icons/IconPrevious";
-import { IconNext } from "../../../../components/icons/IconNext";
-import { IconLoop } from "../../../../components/icons/IconLoop";
-import { IconRandom } from "../../../../components/icons/IconRandom";
-import { IconYoutube } from "../../../../components/icons/IconYoutube";
-import { IconSpeakerX } from "../../../../components/icons/IconSpeakerX";
 import { optionsAtom } from "../../../../atoms/optionsAtom";
 import { youtubePlayListAtom } from "../../../../atoms/youtubePlayList";
+import Icons from "../../../../components/icons/Icons";
 
 export default function PlaySong() {
     const [audioUrl, setAudioUrl] = useState<string>('');
@@ -179,8 +171,21 @@ export default function PlaySong() {
         }
     };
 
+    const handleAudioLoaded = () => {
+        if(audioRef.current && isPlaying === true){
+            audioRef.current.play();
+        }        
+    }
+
     return (
         <div className="md:mt-32 mt-20 w-full max-w-[900px] min-w-[300px] flex flex-col md:mx-auto items-center md:items-start md:flex-row z-20">
+            <audio 
+                ref={audioRef} 
+                hidden 
+                preload="metadata"
+                src={audioUrl}
+                onLoadedMetadata={handleAudioLoaded}
+            />
             <div
                     className="w-[250px] h-[250px] mr-5 relative rounded-full cursor-pointer mb-3 md:mb-0 bg-black"
                     onClick={togglePlay}
@@ -203,9 +208,9 @@ export default function PlaySong() {
                     </div>
                 )}
                 {isPlaying ? (
-                    <IconPause className="cursor-pointer fill-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform transform hover:scale-110" />
+                    <Icons.pause className="cursor-pointer fill-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform transform hover:scale-110" />
                 ) : (
-                    <IconPlay className="cursor-pointer fill-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform transform hover:scale-110" />
+                    <Icons.play className="cursor-pointer fill-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform transform hover:scale-110" />
                 )}
             </div>
             <div className="md:max-w-[500px] w-full">
@@ -228,7 +233,6 @@ export default function PlaySong() {
                             Please select your song
                         </p>
                     )}
-                    {audioUrl && <audio ref={audioRef} hidden />}
                     <div className="flex justify-between mb-0">
                         <p className="text-gray-500 font-mono">{minTime}</p>
                         <p className="text-gray-500 font-mono">{maxTime}</p>
@@ -254,11 +258,11 @@ export default function PlaySong() {
                         }}
                     >
                         {volume !== 0 ? (
-                            <IconSpeakerWave
+                            <Icons.speakerwave
                             className="cursor-pointer transition-transform transform hover:scale-110"
                             />
                         ):(
-                            <IconSpeakerX
+                            <Icons.speakerx
                             className="cursor-pointer transition-transform transform hover:scale-110"
                             />
                         )}
@@ -276,7 +280,7 @@ export default function PlaySong() {
                                 }}
                             />
                     </div>
-                    <IconRandom
+                    <Icons.random
                         className={`${options.isRandom ? "fill-black hover:scale-110" : "fill-gray-500 hover:scale-110"} cursor-pointer transition-transform transform hover:scale-110 `}
                         onClick={() => 
                             {if(options.isRandom){
@@ -293,28 +297,28 @@ export default function PlaySong() {
                             }}
                         }
                     />
-                    <IconPrevious
+                    <Icons.previous
                         className="cursor-pointer transition-transform transform hover:scale-110"
                         onClick={prevSong}
                     />
                     <div className="w-14 h-14 bg-black flex justify-center items-center rounded-full">
                         {isPlaying ? 
-                            <IconPause
+                            <Icons.pause
                                 className="cursor-pointer fill-white transition-transform transform hover:scale-110"
                                 onClick={togglePlay}
                             />
                         :
-                            <IconPlay
+                            <Icons.play
                                 className="cursor-pointer fill-white transition-transform transform hover:scale-110"
                                 onClick={togglePlay}
                             />
                         }
                     </div>
-                    <IconNext
+                    <Icons.next
                         className="cursor-pointer transition-transform transform hover:scale-110"
                         onClick={nextSong}
                     />
-                    <IconLoop
+                    <Icons.loop
                         className={`${options.isLoop ? "fill-black scale-110 hover:scale-110" : "fill-gray-500 hover:scale-110"} cursor-pointer transition-transform transform hover:scale-110 `}
                         onClick={() => 
                             {if(options.isLoop){
@@ -338,13 +342,13 @@ export default function PlaySong() {
                             href={`https://www.youtube.com/watch?v=${selectedSong.id.videoId}`}
                             onClick={togglePlay}
                         >
-                            <IconYoutube
+                            <Icons.youtube
                                 className="cursor-pointer transition-transform transform hover:scale-110 fill-gray-800"
                             />
                         </a>
                     ) : (
-                        <IconYoutube
-                            className="transition-transform transform hover:scale-110 fill-gray-500"
+                        <Icons.youtube
+                            className="fill-gray-500"
                         />
                     )}
                 </div>

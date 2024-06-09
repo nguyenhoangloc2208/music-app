@@ -1,14 +1,12 @@
 import { useAtom } from "jotai";
 import { playListAtom } from "../../../../atoms/playListAtom";
 import { YoutubeSong } from "../../../../hooks/useSearch";
-import { IconEllipsis } from "../../../../components/icons/IconEllipsis";
 import { useCallback } from "react";
 import { selectedSongAtom } from "../../../../atoms/selectedSongAtom";
-import { IconPlay } from "../../../../components/icons/IconPlay";
 import { optionsAtom } from "../../../../atoms/optionsAtom";
 import { youtubePlayListAtom } from "../../../../atoms/youtubePlayList";
-import { IconLoop } from "../../../../components/icons/IconLoop";
 import { useOutletContext } from "react-router-dom";
+import Icons from "../../../../components/icons/Icons";
 
 interface OutletContextProps {
     handleOpen: () => void;
@@ -35,7 +33,7 @@ export default function PlayList(){
                         `${document.title.split(" || ")[1] ? document.title.split(" || ")[1] : `Mix - ${selectedSong.snippet.title}`}`
                         }
                 </h2>
-                <IconLoop className="ml-5 mb-5 cursor-pointer transition-transform transform hover:scale-110 w-1/6"
+                <Icons.loop className="ml-5 mb-5 cursor-pointer transition-transform transform hover:scale-110 w-1/6"
                     onClick={() =>
                         setOptions(prev => ({
                             ...prev,
@@ -58,7 +56,7 @@ export default function PlayList(){
                                     >   
                                         {
                                             selectedSong.id.videoId == play.id.videoId ?
-                                            <IconPlay
+                                            <Icons.play
                                                 className="h-3 w-3 mr-1"
                                             />
                                             :
@@ -78,7 +76,7 @@ export default function PlayList(){
                                                     className="block w-full min-w-[50px] min-h-[50px] h-full object-cover rounded-lg "
                                                     />
                                             </div>
-                                            <div>
+                                            <div className="mr-4">
                                                 <h4 className="text-base font-semibold h-6 overflow-hidden">
                                                     {play.snippet.title}
                                                 </h4>
@@ -87,7 +85,7 @@ export default function PlayList(){
                                                 </p>
                                             </div>
                                             <div className="transition-transform transform hover:scale-110 absolute w-6 h-6 rounded-full flex justify-center items-center hover:bg-gray-200 md:right-10 right-4">
-                                                <IconEllipsis
+                                                <Icons.ellipsis
                                                     className="fill-gray-700 text-xl cursor-pointer transition-transform transform"
                                                     onClick={() => alert('Này chưa làm nhé em iu')}
                                                 />
@@ -120,7 +118,7 @@ export default function PlayList(){
                                     >   
                                         {
                                             selectedSong.id.videoId == play.id.videoId ?
-                                            <IconPlay
+                                            <Icons.play
                                                 className="h-3 w-3 mr-1"
                                             />
                                             :
@@ -140,7 +138,7 @@ export default function PlayList(){
                                                     className="block w-full min-w-[50px] min-h-[50px] h-full object-cover rounded-lg "
                                                     />
                                             </div>
-                                            <div>
+                                            <div className="mr-4">
                                                 <h4 className="text-base font-semibold h-12 mr-6 overflow-hidden">
                                                     {play.snippet.title}
                                                 </h4>
@@ -149,7 +147,7 @@ export default function PlayList(){
                                                 </p>
                                             </div>
                                             <div className="transition-transform transform hover:scale-110 absolute w-6 h-6 rounded-full flex justify-center items-center hover:bg-gray-200 md:right-10 right-4">
-                                                <IconEllipsis
+                                                <Icons.ellipsis
                                                     className="fill-gray-700 text-xl cursor-pointer transition-transform transform"
                                                     onClick={() => alert('Này chưa làm nhé em iu')}
                                                 />

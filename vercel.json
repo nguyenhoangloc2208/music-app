@@ -5,6 +5,10 @@
     {
       "source": "/api/:path*",
       "destination": "https://youtube.googleapis.com/:path*?key=AIzaSyBmifc4eeHdWBHIm4r_WCPZDi2v6AZbUiA&part=snippet"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/"
     }
   ]
 }
