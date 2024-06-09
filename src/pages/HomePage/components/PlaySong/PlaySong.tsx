@@ -42,6 +42,10 @@ export default function PlaySong() {
     useEffect(() => {
         if (selectedSong?.id?.videoId) {
             fetchAudio(selectedSong.id.videoId);
+            setCurrentTime(0);
+            setDuration(0);
+            setMinTime("0:00");
+            setMaxTime("0:00");
         } else {
             setAudioUrl('');
         }
@@ -57,39 +61,6 @@ export default function PlaySong() {
     };
 
     useEffect(() => {
-        const updateMetadata = () => {
-            if (audioRef.current) {
-                const time = Math.floor(audioRef.current.duration);
-                setDuration(time);
-                const [h, m, s] = [
-                    Math.floor(time / 3600),
-                    Math.floor((time % 3600) / 60),
-                    Math.floor(time % 60),
-                ];
-                setMaxTime(`${h > 0 ? `${h}:` : ""}${m}:${s < 10 ? `0${s}` : s}`);
-            }
-        };
-
-        const updateTime = () => {
-            if (audioRef.current) {
-                const current = Math.floor(audioRef.current.currentTime);
-                const [h, m, s] = [
-                    Math.floor(current / 3600),
-                    Math.floor((current % 3600) / 60),
-                    Math.floor(current % 60),
-                ];
-                setMinTime(`${h > 0 ? `${h}:` : ""}${m}:${s < 10 ? `0${s}` : s}`);
-                setCurrentTime(current);
-                // if (current === duration && !options.isLoop) {
-                //     if(!options.isRandom){
-                //         nextSong();
-                //     }else{
-                //         randomSong();
-                //     }
-                // }
-            }
-        };
-
         const audio = audioRef.current;
         if(audio && audioUrl) {
             audio.src = audioUrl;
@@ -107,6 +78,32 @@ export default function PlaySong() {
         }
         updateMediaSessionMetadata(selectedSong);
     }, [audioChangeCounter]);
+
+    const updateMetadata = () => {
+        if (audioRef.current) {
+            const time = Math.floor(audioRef.current.duration);
+            setDuration(time);
+            const [h, m, s] = [
+                Math.floor(time / 3600),
+                Math.floor((time % 3600) / 60),
+                Math.floor(time % 60),
+            ];
+            setMaxTime(`${h > 0 ? `${h}:` : ""}${m}:${s < 10 ? `0${s}` : s}`);
+        }
+    };
+
+    const updateTime = () => {
+        if (audioRef.current) {
+            const current = Math.floor(audioRef.current.currentTime);
+            const [h, m, s] = [
+                Math.floor(current / 3600),
+                Math.floor((current % 3600) / 60),
+                Math.floor(current % 60),
+            ];
+            setMinTime(`${h > 0 ? `${h}:` : ""}${m}:${s < 10 ? `0${s}` : s}`);
+            setCurrentTime(current);
+        }
+    };
 
     const updateMediaSessionMetadata = (song: YoutubeSong) => {
         if ('mediaSession' in navigator) {
