@@ -6,6 +6,7 @@ import { playListAtom } from "../../../../atoms/playListAtom";
 import { optionsAtom } from "../../../../atoms/optionsAtom";
 import { youtubePlayListAtom } from "../../../../atoms/youtubePlayList";
 import Icons from "../../../../components/icons/Icons";
+import { YoutubeSong } from "../../../../hooks/useSearch";
 
 export default function PlaySong() {
     const [audioUrl, setAudioUrl] = useState<string>('');
@@ -22,6 +23,17 @@ export default function PlaySong() {
     const [isVolumeAppear, setIsVolumneAppear] = useState<boolean>(false);
     const [volume, setVolume] = useState<number>(1);
     const [options, setOptions] = useAtom(optionsAtom);
+
+    useEffect(() => {
+        if ('mediaSession' in navigator) {
+            return () => {
+                navigator.mediaSession.setActionHandler('play', null);
+                navigator.mediaSession.setActionHandler('pause', null);
+                navigator.mediaSession.setActionHandler('previoustrack', null);
+                navigator.mediaSession.setActionHandler('nexttrack', null);
+            };
+        }
+    }, []);
 
     useEffect(() => {
         setAudioChangeCounter(prevCounter => prevCounter + 1);
@@ -93,7 +105,38 @@ export default function PlaySong() {
                 audio.onended = nextSong;
             }
         }
+        updateMediaSessionMetadata(selectedSong);
     }, [audioChangeCounter]);
+
+    const updateMediaSessionMetadata = (song: YoutubeSong) => {
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: song.snippet.title,
+                artist: song.snippet.channelTitle,
+                album: 'Beru Music',
+                artwork: [
+                    { src: song.snippet.thumbnails.high.url, sizes: '512x512', type: 'image/jpeg' }
+                ]
+            });
+    
+            navigator.mediaSession.setActionHandler('play', () => {
+                if(audioRef.current){
+                    audioRef.current.play();
+                    setIsPlaying(true);
+                }
+            });
+    
+            navigator.mediaSession.setActionHandler('pause', () => {
+                if(audioRef.current){
+                    audioRef.current.pause();
+                    setIsPlaying(false);
+                }
+            });
+    
+            navigator.mediaSession.setActionHandler('previoustrack', prevSong);
+            navigator.mediaSession.setActionHandler('nexttrack', nextSong);
+        }
+    };
 
     useEffect(() => {
         if (audioRef.current) {
@@ -113,12 +156,6 @@ export default function PlaySong() {
             if (!isPlaying) audio.play();
             else audio.pause();
             setIsPlaying(!isPlaying);
-        } else if (audioUrl.length > 0 && selectedSong.id.videoId.length > 0){
-            try{
-                fetchAudio(selectedSong.id.videoId);
-            } catch {
-                alert('Lỗi');
-            }
         }
     };
 
@@ -191,6 +228,7 @@ export default function PlaySong() {
                 preload="metadata"
                 src={audioUrl}
                 onLoadedMetadata={handleAudioLoaded}
+                onError={nextSong}
             />
             <div
                     className="w-[250px] h-[250px] mr-5 relative rounded-full cursor-pointer mb-3 md:mb-0 bg-black"
