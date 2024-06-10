@@ -11,6 +11,7 @@ import { YoutubeSong } from "../../../../hooks/useSearch";
 export default function PlaySong() {
     const [audioUrl, setAudioUrl] = useState<string>('');
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const audioRef = useRef<HTMLAudioElement>(null);
     const [currentTime, setCurrentTime] = useState<number>(0);
     const [duration, setDuration] = useState<number>(0);
@@ -23,6 +24,24 @@ export default function PlaySong() {
     const [isVolumeAppear, setIsVolumneAppear] = useState<boolean>(false);
     const [volume, setVolume] = useState<number>(1);
     const [options, setOptions] = useAtom(optionsAtom);
+
+    useEffect(() => {
+        let timer: NodeJS.Timeout | null = null;
+
+        if (isLoading) {
+            timer = setTimeout(() => {
+                if (isLoading) {
+                    fetchAudio(selectedSong.id.videoId);
+                }
+            }, 5000);
+        }
+
+        return () => {
+            if (timer) {
+                clearTimeout(timer);
+            }
+        };
+    }, [isLoading]);
 
     useEffect(() => {
         if ('mediaSession' in navigator) {
@@ -52,6 +71,7 @@ export default function PlaySong() {
     }, [selectedSong]);
 
     const fetchAudio = async (videoId: string) => {
+        setIsLoading(true);
         try {
             const response: string = await getAudio(videoId);
             setAudioUrl(response);
@@ -77,6 +97,7 @@ export default function PlaySong() {
             }
         }
         updateMediaSessionMetadata(selectedSong);
+        setIsLoading(false);
     }, [audioChangeCounter]);
 
     const updateMetadata = () => {
@@ -256,7 +277,7 @@ export default function PlaySong() {
                         width={250}
                         height={250}
                         className={`h-[250px] rounded-full object-cover ${
-                            isPlaying
+                            isPlaying && !isLoading
                                 ? "animate-[spin_30s_linear_infinite]"
                                 : ""
                         }`}
@@ -266,11 +287,13 @@ export default function PlaySong() {
                     <div className="h-[250px] w-[250px] bg-black rounded-full flex justify-center items-center">
                     </div>
                 )}
-                {isPlaying ? (
+                {isLoading ? (<span className='text-white loading loading-spinner loading-sm mt-3 mx-auto block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform transform hover:scale-110'></span>
+                ) :(
+                isPlaying ? (
                     <Icons.pause className="cursor-pointer fill-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform transform hover:scale-110" />
                 ) : (
                     <Icons.play className="cursor-pointer fill-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform transform hover:scale-110" />
-                )}
+                ))}
             </div>
             <div className="md:max-w-[500px] w-full">
                 <div>
@@ -361,17 +384,19 @@ export default function PlaySong() {
                         onClick={prevSong}
                     />
                     <div className="w-14 h-14 bg-black flex justify-center items-center rounded-full">
-                        {isPlaying ? 
-                            <Icons.pause
+                        {isLoading ? (<span className='text-white loading loading-spinner loading-sm mx-auto block transition-transform transform hover:scale-110'></span>
+                        ) : (
+                        isPlaying ? 
+                            (<Icons.pause
                                 className="cursor-pointer fill-white transition-transform transform hover:scale-110"
                                 onClick={togglePlay}
                             />
-                        :
+                        ) : (
                             <Icons.play
                                 className="cursor-pointer fill-white transition-transform transform hover:scale-110"
                                 onClick={togglePlay}
-                            />
-                        }
+                            />)
+                        )}
                     </div>
                     <Icons.next
                         className="cursor-pointer transition-transform transform hover:scale-110"
