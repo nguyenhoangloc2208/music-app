@@ -31,7 +31,7 @@ export default function PlaySong() {
         if (isLoading) {
             timer = setTimeout(() => {
                 if (isLoading) {
-                    fetchAudio(selectedSong.id.videoId);
+                    nextSong();
                 }
             }, 5000);
         }
